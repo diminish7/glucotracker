@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Glucotracker</string>
+    <string name="blood_sugar">Blood Sugar</string>
+    <string name="blood_sugar_date">Date</string>
+    <string name="blood_sugar_time">Time</string>
+    <string name="blood_sugar_meal">Before Meal?</string>
+    <string name="blood_sugar_correction">Correction Shot?</string>
+</resources>
