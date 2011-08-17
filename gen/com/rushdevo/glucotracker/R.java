@@ -14,11 +14,12 @@ public final class R {
         public static final int icon=0x7f020000;
     }
     public static final class id {
+        public static final int bloodSugarCorrectionField=0x7f060004;
         public static final int bloodSugarDateField=0x7f060001;
         public static final int bloodSugarField=0x7f060000;
         public static final int bloodSugarMealField=0x7f060003;
         public static final int bloodSugarTimeField=0x7f060002;
-        public static final int form_button=0x7f060004;
+        public static final int form_button=0x7f060005;
     }
     public static final class layout {
         public static final int tracker_form=0x7f030000;
