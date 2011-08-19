@@ -1,8 +1,10 @@
 package com.rushdevo.glucotracker.data;
 
 import static android.provider.BaseColumns._ID;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -24,12 +26,14 @@ public class GlucoseRecord extends SQLiteOpenHelper {
 	public static final String[] COLUMNS = { _ID, BLOOD_SUGAR, BLOOD_SUGAR_DATE, BLOOD_SUGAR_TIME, BLOOD_SUGAR_MEAL, BLOOD_SUGAR_CORRECTION };
 	
 	//////////// PROPERTIES ////////////////////
-	private Integer id;
+	private Long id;
 	private Integer bloodSugar;
 	private String bloodSugarDate;	// TODO: Bother converting this to a Date object?
 	private String bloodSugarTime;	// TODO: Bother converting this to a Time object?
 	private Boolean bloodSugarMeal;
 	private Boolean bloodSugarCorrection;
+	
+	private String[] errors = {};
 	
 	//////////// CONSTRUCTORS ////////////////////
 	/**
@@ -37,8 +41,8 @@ public class GlucoseRecord extends SQLiteOpenHelper {
 	 * @param ctx
 	 * @param factory
 	 */
-	public GlucoseRecord(Context ctx, CursorFactory factory) {
-		super(ctx, DATABASE_NAME, factory, DATABASE_VERSION);
+	public GlucoseRecord(Context ctx) {
+		super(ctx, DATABASE_NAME, null, DATABASE_VERSION);
 	}
 	
 	/**
@@ -47,17 +51,29 @@ public class GlucoseRecord extends SQLiteOpenHelper {
 	 * @param factory
 	 * @param cursor
 	 */
-	public GlucoseRecord(Context ctx, CursorFactory factory, Cursor cursor) {
-		this(ctx, factory);
+	public GlucoseRecord(Context ctx, Cursor cursor) {
+		this(ctx);
 		refreshFromCursor(cursor);
 	}
 	
+	public GlucoseRecord(Context ctx, Integer bloodSugar, String date, String time, Boolean isMeal, Boolean isCorrection) {
+		this(ctx);
+		this.bloodSugar = bloodSugar;
+		this.bloodSugarDate = date;
+		this.bloodSugarTime = time;
+		this.bloodSugarMeal = isMeal;
+		this.bloodSugarCorrection = isCorrection;
+		if (!this.create()) {
+			this.errors[0] = "Unable to create record!";
+		}
+	}
+	
 	/////////// GETTERS AND SETTERS ////////////
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 	
@@ -101,6 +117,14 @@ public class GlucoseRecord extends SQLiteOpenHelper {
 		return bloodSugarCorrection;
 	}
 
+	public String[] getErrors() {
+		return errors;
+	}
+	
+	public Boolean hasErrors() {
+		return (this.errors != null && this.errors.length > 0);
+	}
+
 	//////////// SQLiteOpenHelper STUFF ////////
 	@Override
 	public void onCreate(SQLiteDatabase db) {
@@ -123,6 +147,37 @@ public class GlucoseRecord extends SQLiteOpenHelper {
 		onCreate(db);
 	}
 	
+	///////////// DB OPERATIONS ///////////////
+	public void save() {
+		if (this.id == null) create();
+		else update();
+	}
+	
+	private Boolean create() {
+		SQLiteDatabase db = getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put(BLOOD_SUGAR, getBloodSugar());
+		values.put(BLOOD_SUGAR_DATE, getBloodSugarDate());
+		values.put(BLOOD_SUGAR_TIME, getBloodSugarTime());
+		values.put(BLOOD_SUGAR_MEAL, getBloodSugarMeal());
+		values.put(BLOOD_SUGAR_CORRECTION, getBloodSugarCorrection());
+		try {
+			Long newId = db.insertOrThrow(TABLE_NAME, null, values);
+			if (newId == null || newId <= 0) {
+				return false;
+			} else {
+				setId(newId);
+				return true;
+			}
+		} catch (SQLException e) {
+			return false;
+		}
+	}
+	
+	private void update() {
+		// TODO
+	}
+	
 	///////////// CURSOR HELPERS //////////////
 	public void refreshFromCursor(Cursor cursor) {
 		idFromCursor(cursor);
@@ -133,7 +188,7 @@ public class GlucoseRecord extends SQLiteOpenHelper {
 		correctionFromCursor(cursor);
 	}
 	private void idFromCursor(Cursor cursor) {
-		setId(cursor.getInt(0));
+		setId(cursor.getLong(0));
 	}
 	
 	private void bloodSugarFromCursor(Cursor cursor) {
