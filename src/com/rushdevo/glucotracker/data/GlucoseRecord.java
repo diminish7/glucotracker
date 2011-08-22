@@ -6,7 +6,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 
 /**
@@ -124,6 +123,24 @@ public class GlucoseRecord extends SQLiteOpenHelper {
 	public Boolean hasErrors() {
 		return (this.errors != null && this.errors.length > 0);
 	}
+	
+	public String getErrorMessage() {
+		if (hasErrors()) {
+			if (this.errors.length == 1) {
+				return this.errors[0];
+			} else {
+				StringBuilder msg = new StringBuilder();
+				msg.append(this.errors[0]);
+				for (int i=1; i< this.errors.length; i++) {
+					msg.append(", ");
+					msg.append(this.errors[i]);
+				}
+				return msg.toString();
+			}
+		} else {
+			return "";
+		}
+	}
 
 	//////////// SQLiteOpenHelper STUFF ////////
 	@Override
@@ -135,7 +152,7 @@ public class GlucoseRecord extends SQLiteOpenHelper {
 		sql.append(BLOOD_SUGAR_DATE + " TEXT,");
 		sql.append(BLOOD_SUGAR_TIME + " TEXT,");
 		sql.append(BLOOD_SUGAR_MEAL + " INTEGER,");
-		sql.append(BLOOD_SUGAR_CORRECTION + " INTEGER,");
+		sql.append(BLOOD_SUGAR_CORRECTION + " INTEGER");
 		sql.append(");");
 		db.execSQL(sql.toString());
 	}
