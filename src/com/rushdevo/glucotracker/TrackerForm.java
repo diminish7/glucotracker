@@ -1,6 +1,7 @@
 package com.rushdevo.glucotracker;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,6 +18,10 @@ import android.widget.TimePicker;
 
 import com.rushdevo.glucotracker.data.GlucoseRecord;
 
+/**
+ * @author jasonrush
+ * Main form for adding glucose records to the database
+ */
 public class TrackerForm extends Activity implements OnClickListener {
 	private ScrollView formScrollView;
 	private Button formButton;
@@ -78,10 +83,10 @@ public class TrackerForm extends Activity implements OnClickListener {
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch (item.getItemId()) {
     	case R.id.settings:
-    		// TODO: startActivity(new Intent(this, Prefs.class));
+    		// TODO
     		return true;
     	case R.id.list:
-    		// TODO
+    		startActivity(new Intent(this, TrackerList.class));
     		return true;
     	case R.id.graph:
     		// TODO
