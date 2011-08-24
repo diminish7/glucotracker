@@ -4,4 +4,7 @@
     <string name="blood_sugar">Blood Sugar:</string>
     <string name="blood_sugar_meal">Before Meal?</string>
     <string name="blood_sugar_correction">Correction Shot?</string>
+    <string name="settings_label">Settings</string>
+    <string name="list_label">List</string>
+    <string name="graph_label">Graph</string>
 </resources>

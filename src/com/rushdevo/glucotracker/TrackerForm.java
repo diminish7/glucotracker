@@ -2,6 +2,9 @@ package com.rushdevo.glucotracker;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -62,6 +65,31 @@ public class TrackerForm extends Activity implements OnClickListener {
 		}
 		
 	}
+	
+	@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+    	super.onCreateOptionsMenu(menu);
+    	MenuInflater inflater = getMenuInflater();
+    	inflater.inflate(R.menu.menu, menu);
+    	return true;
+    }
+	
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	switch (item.getItemId()) {
+    	case R.id.settings:
+    		// TODO: startActivity(new Intent(this, Prefs.class));
+    		return true;
+    	case R.id.list:
+    		// TODO
+    		return true;
+    	case R.id.graph:
+    		// TODO
+    		return true;
+    	// TODO: Addtl menu items go here
+    	}
+    	return false;
+    }
 	
 	private String getDbDateFromDatePicker(DatePicker picker) {
 		return picker.getYear() + "-" +
