@@ -40,6 +40,10 @@ public class TrackerList extends Activity {
 	}
 	
 	//////////// HELPERS ///////////////
+	
+	/**
+	 * Initialize the dates for the query. Default to current month
+	 */
 	private void initializeDates() {
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());

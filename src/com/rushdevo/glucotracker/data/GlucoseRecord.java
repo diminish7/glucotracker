@@ -1,21 +1,14 @@
 package com.rushdevo.glucotracker.data;
 
 import static android.provider.BaseColumns._ID;
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 
 /**
  * @author jasonrush
- * Represents a blood sugar record in the database
+ * Glucose record model
  */
-public class GlucoseRecord extends SQLiteOpenHelper {
-	//////////// CONSTANTS /////////////////////
-	public static final String DATABASE_NAME = "glucotracker.db";
-	public static final int DATABASE_VERSION = 1;
+public class GlucoseRecord {
 	public static final String TABLE_NAME = "glucose_records";
 	public static final String BLOOD_SUGAR = "blood_sugar";
 	public static final String BLOOD_SUGAR_DATE = "blood_sugar_date";
@@ -27,36 +20,22 @@ public class GlucoseRecord extends SQLiteOpenHelper {
 	//////////// PROPERTIES ////////////////////
 	private Long id;
 	private Integer bloodSugar;
-	private String bloodSugarDate;	// TODO: Bother converting this to a Date object?
-	private String bloodSugarTime;	// TODO: Bother converting this to a Time object?
+	private String bloodSugarDate;
+	private String bloodSugarTime;
 	private Boolean bloodSugarMeal;
 	private Boolean bloodSugarCorrection;
 	
+	private GlucotrackerData delegate;
 	private String[] errors = {};
 	
-	//////////// CONSTRUCTORS ////////////////////
-	/**
-	 * Basic constructor, delegates to SQLiteOpenHelper
-	 * @param ctx
-	 * @param factory
-	 */
-	public GlucoseRecord(Context ctx) {
-		super(ctx, DATABASE_NAME, null, DATABASE_VERSION);
-	}
-	
-	/**
-	 * Creates a GlucoseRecord and refreshes its properties from the cursor values
-	 * @param ctx
-	 * @param factory
-	 * @param cursor
-	 */
-	public GlucoseRecord(Context ctx, Cursor cursor) {
-		this(ctx);
+	/////////// CONSTRUCTORS ///////////////////
+	public GlucoseRecord(GlucotrackerData delegate, Cursor cursor) {
+		this.delegate = delegate;
 		refreshFromCursor(cursor);
 	}
 	
-	public GlucoseRecord(Context ctx, Integer bloodSugar, String date, String time, Boolean isMeal, Boolean isCorrection) {
-		this(ctx);
+	public GlucoseRecord(GlucotrackerData delegate, Integer bloodSugar, String date, String time, Boolean isMeal, Boolean isCorrection) {
+		this.delegate = delegate;
 		this.bloodSugar = bloodSugar;
 		this.bloodSugarDate = date;
 		this.bloodSugarTime = time;
@@ -65,6 +44,10 @@ public class GlucoseRecord extends SQLiteOpenHelper {
 		if (!this.create()) {
 			this.errors[0] = "Unable to create record!";
 		}
+	}
+	
+	public GlucoseRecord(Context ctx, Integer bloodSugar, String date, String time, Boolean isMeal, Boolean isCorrection) {
+		this(new GlucotrackerData(ctx), bloodSugar, date, time, isMeal, isCorrection);
 	}
 	
 	/////////// GETTERS AND SETTERS ////////////
@@ -115,6 +98,14 @@ public class GlucoseRecord extends SQLiteOpenHelper {
 	public Boolean getBloodSugarCorrection() {
 		return bloodSugarCorrection;
 	}
+	
+	public void setDelegate(GlucotrackerData delegate) {
+		this.delegate = delegate;
+	}
+
+	public GlucotrackerData getDelegate() {
+		return delegate;
+	}
 
 	public String[] getErrors() {
 		return errors;
@@ -141,61 +132,22 @@ public class GlucoseRecord extends SQLiteOpenHelper {
 			return "";
 		}
 	}
-
-	//////////// SQLiteOpenHelper STUFF ////////
-	@Override
-	public void onCreate(SQLiteDatabase db) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("CREATE TABLE " + TABLE_NAME + " (");
-		sql.append(_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, ");
-		sql.append(BLOOD_SUGAR + " INTEGER, ");
-		sql.append(BLOOD_SUGAR_DATE + " TEXT,");
-		sql.append(BLOOD_SUGAR_TIME + " TEXT,");
-		sql.append(BLOOD_SUGAR_MEAL + " INTEGER,");
-		sql.append(BLOOD_SUGAR_CORRECTION + " INTEGER");
-		sql.append(");");
-		db.execSQL(sql.toString());
-	}
-
-	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// TODO This is just stubbed out for now, need to implement a version-by-version upgrade
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-		onCreate(db);
-	}
 	
-	///////////// DB OPERATIONS ///////////////
+	//////// DATA ACCESS METHODS ////////////////
 	public void save() {
 		if (this.id == null) create();
 		else update();
 	}
 	
-	private Boolean create() {
-		SQLiteDatabase db = getWritableDatabase();
-		ContentValues values = new ContentValues();
-		values.put(BLOOD_SUGAR, getBloodSugar());
-		values.put(BLOOD_SUGAR_DATE, getBloodSugarDate());
-		values.put(BLOOD_SUGAR_TIME, getBloodSugarTime());
-		values.put(BLOOD_SUGAR_MEAL, getBloodSugarMeal());
-		values.put(BLOOD_SUGAR_CORRECTION, getBloodSugarCorrection());
-		try {
-			Long newId = db.insertOrThrow(TABLE_NAME, null, values);
-			if (newId == null || newId <= 0) {
-				return false;
-			} else {
-				setId(newId);
-				return true;
-			}
-		} catch (SQLException e) {
-			return false;
-		}
+	public boolean create() {
+		return delegate.create(this);
 	}
 	
-	private void update() {
-		// TODO
+	public boolean update() {
+		return delegate.update(this);
 	}
 	
-	///////////// CURSOR HELPERS //////////////
+///////////// CURSOR HELPERS //////////////
 	public void refreshFromCursor(Cursor cursor) {
 		idFromCursor(cursor);
 		bloodSugarFromCursor(cursor);
@@ -229,5 +181,4 @@ public class GlucoseRecord extends SQLiteOpenHelper {
 		Integer val = cursor.getInt(5);
 		setBloodSugarCorrection(!(val == null || val == 0));
 	}
-
 }

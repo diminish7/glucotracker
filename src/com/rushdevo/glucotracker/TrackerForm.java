@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.rushdevo.glucotracker.data.GlucoseRecord;
+import com.rushdevo.glucotracker.data.GlucotrackerData;
 
 /**
  * @author jasonrush
@@ -31,6 +32,7 @@ public class TrackerForm extends Activity implements OnClickListener {
 	private CheckBox bloodSugarMealField;
 	private CheckBox bloodSugarCorrectionField;
 	private TextView messageView;
+	private GlucotrackerData dataDelegate;
 	
 	
     /** Called when the activity is first created. */
@@ -47,6 +49,7 @@ public class TrackerForm extends Activity implements OnClickListener {
         this.bloodSugarMealField = (CheckBox)findViewById(R.id.blood_sugar_meal_field);
         this.bloodSugarCorrectionField = (CheckBox)findViewById(R.id.blood_sugar_correction_field);
         this.messageView = (TextView)findViewById(R.id.message_view);
+        this.dataDelegate = new GlucotrackerData(this);
     }
 
 
@@ -60,7 +63,7 @@ public class TrackerForm extends Activity implements OnClickListener {
 			String bloodSugarTime = getDbTimeFromTimePicker(bloodSugarTimeField);
 			Boolean isMeal = bloodSugarMealField.isChecked();
 			Boolean isCorrection = bloodSugarCorrectionField.isChecked();
-			GlucoseRecord record = new GlucoseRecord(this, bloodSugar, bloodSugarDate, bloodSugarTime, isMeal, isCorrection);
+			GlucoseRecord record = new GlucoseRecord(dataDelegate, bloodSugar, bloodSugarDate, bloodSugarTime, isMeal, isCorrection); 
 			if (record.hasErrors()) {
 				showMessage(record.getErrorMessage(), true);
 			} else {
