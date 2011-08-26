@@ -2,9 +2,13 @@ package com.rushdevo.glucotracker;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import android.app.Activity;
 import android.os.Bundle;
+
+import com.rushdevo.glucotracker.data.GlucoseRecord;
+import com.rushdevo.glucotracker.data.GlucotrackerData;
 
 /**
  * @author jasonrush
@@ -14,11 +18,17 @@ public class TrackerList extends Activity {
 	private Date startDate;
 	private Date endDate;
 	
+	private GlucotrackerData dataDelegate;
+	private List<GlucoseRecord> records;
+	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.tracker_list);
+        this.dataDelegate = new GlucotrackerData(this);
         initializeDates();
+        queryRecords();
+        // TODO: Display records
 	}
 
 	/////// GETTERS AND SETTERS ////////////
@@ -51,5 +61,12 @@ public class TrackerList extends Activity {
 		this.startDate = c.getTime();
 		c.set(Calendar.DAY_OF_MONTH, c.getMaximum(Calendar.DAY_OF_MONTH));
 		this.endDate = c.getTime();
+	}
+	
+	/**
+	 * Query the records between this.startDate and this.endDate
+	 */
+	private void queryRecords() {
+		this.records = dataDelegate.getGlucoseRecords(startDate, endDate);
 	}
 }

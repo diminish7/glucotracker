@@ -1,8 +1,15 @@
 package com.rushdevo.glucotracker.data;
 
 import static android.provider.BaseColumns._ID;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -15,6 +22,7 @@ public class GlucotrackerData extends SQLiteOpenHelper {
 	//////////// CONSTANTS /////////////////////
 	public static final String DATABASE_NAME = "glucotracker.db";
 	public static final int DATABASE_VERSION = 1;
+	private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 	
 	/////////// PROPERTIES /////////////////////
 	private Context context;
@@ -86,5 +94,17 @@ public class GlucotrackerData extends SQLiteOpenHelper {
 	public Boolean update(GlucoseRecord record) {
 		// TODO
 		return true;
+	}
+	
+	public List<GlucoseRecord> getGlucoseRecords(Date startDate, Date endDate) {
+		List<GlucoseRecord> list = new ArrayList<GlucoseRecord>();
+		SQLiteDatabase db = getReadableDatabase();
+		String selection = GlucoseRecord.BLOOD_SUGAR_DATE + " BETWEEN ? AND ?";
+		String[] selectionArgs = { dateFormatter.format(startDate), dateFormatter.format(endDate) };
+		Cursor cursor = db.query(GlucoseRecord.TABLE_NAME, GlucoseRecord.COLUMNS, selection, selectionArgs, null, null, null);
+		while (cursor.moveToNext()) {
+			list.add(new GlucoseRecord(this, cursor));
+		}
+		return list;
 	}
 }
