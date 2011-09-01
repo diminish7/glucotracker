@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import android.app.Activity;
+import android.app.ListActivity;
 import android.os.Bundle;
 
 import com.rushdevo.glucotracker.data.GlucoseRecord;
@@ -14,7 +14,7 @@ import com.rushdevo.glucotracker.data.GlucotrackerData;
  * @author jasonrush
  * List of glucose records
  */
-public class TrackerList extends Activity {
+public class TrackerList extends ListActivity {
 	private Date startDate;
 	private Date endDate;
 	
@@ -24,11 +24,10 @@ public class TrackerList extends Activity {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-        setContentView(R.layout.tracker_list);
         this.dataDelegate = new GlucotrackerData(this);
         initializeDates();
         queryRecords();
-        // TODO: Display records
+        setListAdapter(new GlucoseRecordAdapter(this, android.R.layout.simple_list_item_1, this.records));
 	}
 
 	/////// GETTERS AND SETTERS ////////////

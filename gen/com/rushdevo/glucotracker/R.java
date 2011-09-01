@@ -26,15 +26,13 @@ public final class R {
         public static final int blood_sugar_time_field=0x7f080004;
         public static final int form_button=0x7f080007;
         public static final int form_scroll_view=0x7f080000;
-        public static final int graph=0x7f08000b;
-        public static final int list=0x7f08000a;
-        public static final int list_scroll_view=0x7f080008;
+        public static final int graph=0x7f08000a;
+        public static final int list=0x7f080009;
         public static final int message_view=0x7f080001;
-        public static final int settings=0x7f080009;
+        public static final int settings=0x7f080008;
     }
     public static final class layout {
         public static final int tracker_form=0x7f030000;
-        public static final int tracker_list=0x7f030001;
     }
     public static final class menu {
         public static final int menu=0x7f070000;

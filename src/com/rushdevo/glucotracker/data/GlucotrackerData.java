@@ -101,10 +101,11 @@ public class GlucotrackerData extends SQLiteOpenHelper {
 		SQLiteDatabase db = getReadableDatabase();
 		String selection = GlucoseRecord.BLOOD_SUGAR_DATE + " BETWEEN ? AND ?";
 		String[] selectionArgs = { dateFormatter.format(startDate), dateFormatter.format(endDate) };
-		Cursor cursor = db.query(GlucoseRecord.TABLE_NAME, GlucoseRecord.COLUMNS, selection, selectionArgs, null, null, null);
+		Cursor cursor = db.query(GlucoseRecord.TABLE_NAME, GlucoseRecord.COLUMNS, selection, selectionArgs, null, null, GlucoseRecord.BLOOD_SUGAR_DATE + ", " + GlucoseRecord.BLOOD_SUGAR_TIME + " ASC");
 		while (cursor.moveToNext()) {
 			list.add(new GlucoseRecord(this, cursor));
 		}
+		cursor.close();
 		return list;
 	}
 }

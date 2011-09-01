@@ -101,7 +101,7 @@ public class TrackerForm extends Activity implements OnClickListener {
 	
 	private String getDbDateFromDatePicker(DatePicker picker) {
 		return picker.getYear() + "-" +
-				String.format("%02d", picker.getMonth()) + "-" +
+				String.format("%02d", (picker.getMonth() + 1)) + "-" +
 				String.format("%02d", picker.getDayOfMonth());
 	}
 	
