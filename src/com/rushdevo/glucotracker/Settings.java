@@ -13,9 +13,11 @@ import android.preference.PreferenceManager;
 public class Settings extends PreferenceActivity {
 	// Option names and default values
 	private static final String OPT_HIGH = "high";
-	private static final Integer OPT_HIGH_DEF = 160;
+	private static final String OPT_HIGH_DEF = "160";
+	private static final Integer OPT_HIGH_DEF_INT = Integer.parseInt(OPT_HIGH_DEF);
 	private static final String OPT_LOW = "low";
-	private static final Integer OPT_LOW_DEF = 70;
+	private static final String OPT_LOW_DEF = "70";
+	private static final Integer OPT_LOW_DEF_INT = Integer.parseInt(OPT_LOW_DEF);
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -25,10 +27,20 @@ public class Settings extends PreferenceActivity {
 	
 	// Get the current value of the high end of the range
 	public static Integer getHigh(Context context) {
-		return PreferenceManager.getDefaultSharedPreferences(context).getInt(OPT_HIGH, OPT_HIGH_DEF);
+		String highStr = PreferenceManager.getDefaultSharedPreferences(context).getString(OPT_HIGH, OPT_HIGH_DEF);
+		try {
+			return Integer.parseInt(highStr);
+		} catch(NumberFormatException e) {
+			return OPT_HIGH_DEF_INT;
+		}
 	}
 	
 	public static Integer getLow(Context context) {
-		return PreferenceManager.getDefaultSharedPreferences(context).getInt(OPT_LOW, OPT_LOW_DEF);
+		String lowStr = PreferenceManager.getDefaultSharedPreferences(context).getString(OPT_LOW, OPT_LOW_DEF);
+		try {
+			return Integer.parseInt(lowStr);
+		} catch(NumberFormatException e) {
+			return OPT_LOW_DEF_INT;
+		}
 	}
 }

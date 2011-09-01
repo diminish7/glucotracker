@@ -1,6 +1,9 @@
 package com.rushdevo.glucotracker.data;
 
 import static android.provider.BaseColumns._ID;
+
+import com.rushdevo.glucotracker.Settings;
+
 import android.content.Context;
 import android.database.Cursor;
 
@@ -24,6 +27,8 @@ public class GlucoseRecord {
 	private String bloodSugarTime;
 	private Boolean bloodSugarMeal;
 	private Boolean bloodSugarCorrection;
+	
+	private Boolean flag;
 	
 	private GlucotrackerData delegate;
 	private String[] errors = {};
@@ -113,6 +118,22 @@ public class GlucoseRecord {
 	
 	public Boolean hasErrors() {
 		return (this.errors != null && this.errors.length > 0);
+	}
+	
+	/**
+	 * 
+	 * @param low The low end of the target
+	 * @param high
+	 * @return
+	 */
+	public Boolean shouldFlag() {
+		if (this.flag == null) {
+			Context context = this.delegate.getContext();
+			int low = Settings.getLow(context);
+			int high = Settings.getHigh(context);
+			this.flag = (this.bloodSugar < low || this.bloodSugar > high);
+		}
+		return this.flag;
 	}
 	
 	public String getErrorMessage() {

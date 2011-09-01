@@ -6,6 +6,7 @@ package com.rushdevo.glucotracker;
 import com.rushdevo.glucotracker.data.GlucoseRecord;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.widget.LinearLayout;
@@ -44,6 +45,10 @@ public class GlucoseRecordView extends LinearLayout {
 		int sidePadding = 10*dip;
 		int topPadding = 5*dip;
 		int width = 50*dip;
+		
+		if (this.record.shouldFlag()) {
+			setBackgroundColor(Color.RED);
+		}
 		
 		bloodSugarView = new TextView(context);
 		bloodSugarView.setText(this.record.getBloodSugar().toString());
