@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<EditTextPreference
+		android:key="high"
+		android:title="@string/high_title"
+		android:summary="@string/high_summary"
+		android:defaultValue="160" />
+	<EditTextPreference
+		android:key="low"
+		android:title="@string/low_title"
+		android:summary="@string/low_summary"
+		android:defaultValue="70" />
+</PreferenceScreen>

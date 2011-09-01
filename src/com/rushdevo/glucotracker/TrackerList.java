@@ -5,7 +5,11 @@ import java.util.Date;
 import java.util.List;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.rushdevo.glucotracker.data.GlucoseRecord;
 import com.rushdevo.glucotracker.data.GlucotrackerData;
@@ -29,6 +33,27 @@ public class TrackerList extends ListActivity {
         queryRecords();
         setListAdapter(new GlucoseRecordAdapter(this, android.R.layout.simple_list_item_1, this.records));
 	}
+	
+	@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+    	super.onCreateOptionsMenu(menu);
+    	MenuInflater inflater = getMenuInflater();
+    	inflater.inflate(R.menu.list_menu, menu);
+    	return true;
+    }
+	
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	switch (item.getItemId()) {
+    	case R.id.settings:
+    		startActivity(new Intent(this, Settings.class));
+    		return true;
+    	case R.id.graph:
+    		// TODO
+    		return true;
+    	}
+    	return false;
+    }
 
 	/////// GETTERS AND SETTERS ////////////
 	

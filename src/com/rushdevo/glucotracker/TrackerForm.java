@@ -78,7 +78,7 @@ public class TrackerForm extends Activity implements OnClickListener {
     public boolean onCreateOptionsMenu(Menu menu) {
     	super.onCreateOptionsMenu(menu);
     	MenuInflater inflater = getMenuInflater();
-    	inflater.inflate(R.menu.menu, menu);
+    	inflater.inflate(R.menu.form_menu, menu);
     	return true;
     }
 	
@@ -86,7 +86,7 @@ public class TrackerForm extends Activity implements OnClickListener {
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch (item.getItemId()) {
     	case R.id.settings:
-    		// TODO
+    		startActivity(new Intent(this, Settings.class));
     		return true;
     	case R.id.list:
     		startActivity(new Intent(this, TrackerList.class));

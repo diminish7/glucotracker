@@ -7,4 +7,9 @@
     <string name="settings_label">Settings</string>
     <string name="list_label">List</string>
     <string name="graph_label">Graph</string>
+    <string name="high_title">High</string>
+    <string name="high_summary">High end of target blood glucose range</string>
+    <string name="low_title">Low</string>
+    <string name="low_summary">Low end of target blood glucose range</string>
+    <string name="settings_title"></string>
 </resources>
