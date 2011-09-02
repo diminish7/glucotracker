@@ -3,7 +3,8 @@
  */
 package com.rushdevo.glucotracker;
 
-import com.rushdevo.glucotracker.data.GlucoseRecord;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -11,6 +12,8 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.rushdevo.glucotracker.data.GlucoseRecord;
 
 /**
  * @author jasonrush
@@ -22,9 +25,13 @@ public class GlucoseRecordView extends LinearLayout {
 	private TextView bloodSugarView;
 	private TextView dateView;
 	private int dip;
+	SimpleDateFormat parser;
+	SimpleDateFormat formatter;
 	
 	public GlucoseRecordView(Context context, GlucoseRecord record) {
 		super(context);
+		parser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		formatter = new SimpleDateFormat("M/d/yyyy  h:mm a");
 		this.setOrientation(HORIZONTAL);
 		this.setRecord(record);
 		this.dip = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float)1, getResources().getDisplayMetrics());
@@ -65,8 +72,13 @@ public class GlucoseRecordView extends LinearLayout {
 	}
 	
 	private String formattedTimestamp(String date, String time) {
-		// TODO: Do some better formatting on this. This will render it as yyyy-mm-dd hh:mm
-		return date + " " + time;
+		String formatted;
+		try {
+			formatted = formatter.format(parser.parse(date + " " + time));
+		} catch (ParseException e) {
+			formatted = "";
+		}
+		return formatted;
 	}
 	
 	private void invalidateRecordText() {

@@ -1,11 +1,10 @@
 package com.rushdevo.glucotracker.data;
 
 import static android.provider.BaseColumns._ID;
-
-import com.rushdevo.glucotracker.Settings;
-
 import android.content.Context;
 import android.database.Cursor;
+
+import com.rushdevo.glucotracker.Settings;
 
 /**
  * @author jasonrush
