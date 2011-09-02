@@ -34,6 +34,7 @@ public class GlucoseRecordView extends LinearLayout {
 	//////////GETTERS AND SETTERS//////////////
 	public void setRecord(GlucoseRecord record) {
 		this.record = record;
+		invalidateRecordText();
 	}
 
 	public GlucoseRecord getRecord() {
@@ -51,19 +52,25 @@ public class GlucoseRecordView extends LinearLayout {
 		}
 		
 		bloodSugarView = new TextView(context);
-		bloodSugarView.setText(this.record.getBloodSugar().toString());
 		bloodSugarView.setPadding(sidePadding, topPadding, sidePadding, topPadding);
 		bloodSugarView.setGravity(Gravity.RIGHT);
-		addView(bloodSugarView, new LinearLayout.LayoutParams(width, LayoutParams.FILL_PARENT));
 		
 		dateView = new TextView(context);
-		dateView.setText(formattedTimestamp(record.getBloodSugarDate(), record.getBloodSugarTime()));
 		dateView.setPadding(sidePadding, topPadding, sidePadding, topPadding);
+		
+		invalidateRecordText();
+		
+		addView(bloodSugarView, new LinearLayout.LayoutParams(width, LayoutParams.FILL_PARENT));
 		addView(dateView, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.FILL_PARENT));
 	}
 	
 	private String formattedTimestamp(String date, String time) {
 		// TODO: Do some better formatting on this. This will render it as yyyy-mm-dd hh:mm
 		return date + " " + time;
+	}
+	
+	private void invalidateRecordText() {
+		if (bloodSugarView != null) bloodSugarView.setText(this.record.getBloodSugar().toString());
+		if (dateView != null) dateView.setText(formattedTimestamp(record.getBloodSugarDate(), record.getBloodSugarTime()));
 	}
 }

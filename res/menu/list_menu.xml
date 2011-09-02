@@ -4,4 +4,6 @@
 		android:title="@string/settings_label" />
 	<item android:id="@+id/graph"
 		android:title="@string/graph_label" />
+	<item android:id="@+id/change_dates"
+		android:title="@string/change_dates_label" />
 </menu>

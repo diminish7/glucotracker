@@ -32,7 +32,19 @@ public class GlucoseRecordAdapter extends ArrayAdapter<GlucoseRecord> {
 		} else {
 			view = (GlucoseRecordView)convertView;
 			view.setRecord(record);
+			view.invalidate();
 		}
 		return view;
     }
+	
+	////////////// GETTERS AND SETTERS///////////////
+	public void setRecords(List<GlucoseRecord> records) {
+		this.records = records;
+		// Reset the ArrayAdapter list
+		clear();
+		// Add the new data to the ArrayAdapter list
+		for (GlucoseRecord record : records) {
+			add(record);
+		}
+	}
 }

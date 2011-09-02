@@ -11,5 +11,11 @@
     <string name="high_summary">High end of target blood glucose range</string>
     <string name="low_title">Low</string>
     <string name="low_summary">Low end of target blood glucose range</string>
-    <string name="settings_title"></string>
+    <string name="settings_title">Change Target Range</string>
+    <string name="change_dates_title">Change Date Range</string>
+    <string name="change_dates_label">Date Range</string>
+    <string name="start_date">Start:</string>
+    <string name="stop_date">Stop:</string>
+    <string name="alert_dialog_ok">OK</string>
+    <string name="alert_dialog_cancel">Cancel</string>
 </resources>
