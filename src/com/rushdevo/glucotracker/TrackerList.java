@@ -1,5 +1,6 @@
 package com.rushdevo.glucotracker;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -32,11 +33,15 @@ public class TrackerList extends ListActivity {
 	
 	private GlucoseRecordAdapter listAdapter;
 	
+	private SimpleDateFormat formatter;
+	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		this.formatter = new SimpleDateFormat("M/d/yyyy");
         this.dataDelegate = new GlucotrackerData(this);
         initializeDates();
+        resetTitle();
         queryRecords();
         listAdapter = new GlucoseRecordAdapter(this, android.R.layout.simple_list_item_1, this.records);
         setListAdapter(listAdapter);
@@ -114,9 +119,10 @@ public class TrackerList extends ListActivity {
             	
             	// Query records within the start and stop date
             	queryRecords();
-            	
             	// Refresh the list
             	updateList();
+            	// Update the title to include the new date range
+            	resetTitle();
             }
         });
 		
@@ -155,5 +161,20 @@ public class TrackerList extends ListActivity {
 	private void updateList() {
     	listAdapter.setRecords(records);
     	listAdapter.notifyDataSetChanged();
+	}
+	
+	/**
+	 * Reset the title to include the dates
+	 */
+	private void resetTitle() {
+		StringBuilder title = new StringBuilder(getResources().getString(R.string.app_name));
+		if (startDateCal != null && stopDateCal != null) {
+			title.append(" (");
+			title.append(formatter.format(startDateCal.getTime()));
+			title.append(" - ");
+			title.append(formatter.format(stopDateCal.getTime()));
+			title.append(")");
+		}
+		setTitle(title);
 	}
 }
