@@ -37,6 +37,7 @@ public final class R {
     public static final class layout {
         public static final int date_changer=0x7f030000;
         public static final int tracker_form=0x7f030001;
+        public static final int tracker_list=0x7f030002;
     }
     public static final class menu {
         public static final int form_menu=0x7f080000;
@@ -55,6 +56,7 @@ public final class R {
         public static final int high_summary=0x7f060008;
         public static final int high_title=0x7f060007;
         public static final int list_label=0x7f060005;
+        public static final int list_no_records=0x7f060012;
         public static final int low_summary=0x7f06000a;
         public static final int low_title=0x7f060009;
         public static final int settings_label=0x7f060004;

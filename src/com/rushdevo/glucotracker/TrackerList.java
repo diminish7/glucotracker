@@ -10,12 +10,15 @@ import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.rushdevo.glucotracker.data.GlucoseRecord;
 import com.rushdevo.glucotracker.data.GlucotrackerData;
@@ -30,19 +33,28 @@ public class TrackerList extends ListActivity {
 	
 	private GlucotrackerData dataDelegate;
 	private List<GlucoseRecord> records;
-	
+	private ListView listView;
+	private TextView footer;
 	private GlucoseRecordAdapter listAdapter;
 	
 	private SimpleDateFormat formatter;
+	private Integer average;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.tracker_list);
+		this.listView = getListView();
 		this.formatter = new SimpleDateFormat("M/d/yyyy");
         this.dataDelegate = new GlucotrackerData(this);
         initializeDates();
         resetTitle();
         queryRecords();
+        calculateAverage();
+        footer = new TextView(this);
+        setFooterText();
+        footer.setGravity(Gravity.CENTER);
+        listView.addFooterView(footer);
         listAdapter = new GlucoseRecordAdapter(this, android.R.layout.simple_list_item_1, this.records);
         setListAdapter(listAdapter);
 	}
@@ -123,6 +135,9 @@ public class TrackerList extends ListActivity {
             	updateList();
             	// Update the title to include the new date range
             	resetTitle();
+            	// Update the average
+            	calculateAverage();
+            	setFooterText();
             }
         });
 		
@@ -135,6 +150,7 @@ public class TrackerList extends ListActivity {
 		dialog.show();
 		return true;
 	}
+	
 	/**
 	 * Initialize the dates for the query. Default to current month
 	 */
@@ -153,6 +169,21 @@ public class TrackerList extends ListActivity {
 	 */
 	private void queryRecords() {
 		this.records = dataDelegate.getGlucoseRecords(startDateCal.getTime(), stopDateCal.getTime());
+	}
+	
+	/**
+	 * Calculate the average for the set of GlucoseRecords
+	 */
+	private void calculateAverage() {
+		if (records.isEmpty()) {
+			this.average = 0;
+		} else {
+			Integer total = 0;
+			for (GlucoseRecord record : records) {
+				total += record.getBloodSugar();
+			}
+			this.average = Math.round(total / new Float(records.size()));
+		}
 	}
 	
 	/**
@@ -176,5 +207,12 @@ public class TrackerList extends ListActivity {
 			title.append(")");
 		}
 		setTitle(title);
+	}
+	
+	/**
+	 * Set the footer text to the current average
+	 */
+	private void setFooterText() {
+		footer.setText("Average: " + this.average);
 	}
 }
