@@ -52,7 +52,7 @@ public class GlucoseRecordView extends LinearLayout {
 	private void buildSubViews(Context context) {
 		int sidePadding = 10*dip;
 		int topPadding = 5*dip;
-		int width = 50*dip;
+		int width = 80*dip;
 		
 		if (this.record.shouldFlag()) {
 			setBackgroundColor(Color.RED);

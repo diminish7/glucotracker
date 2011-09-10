@@ -2,10 +2,6 @@ package com.rushdevo.glucotracker.data;
 
 import static android.provider.BaseColumns._ID;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -64,7 +60,6 @@ public class GlucotrackerData extends SQLiteOpenHelper {
 		sql.append(GlucoseRecord.BLOOD_SUGAR_CORRECTION + " INTEGER");
 		sql.append(");");
 		db.execSQL(sql.toString());
-		checkForInitData(db);
 	}
 
 	@Override
@@ -72,28 +67,6 @@ public class GlucotrackerData extends SQLiteOpenHelper {
 		// TODO This is just stubbed out for now, need to implement a version-by-version upgrade
 		db.execSQL("DROP TABLE IF EXISTS " + GlucoseRecord.TABLE_NAME);
 		onCreate(db);
-	}
-	
-	private void checkForInitData(SQLiteDatabase db) {
-		try {
-			ContentValues values;
-			InputStream stream = this.context.getAssets().open("init.csv");
-			BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-			String line;
-			while ((line = reader.readLine()) != null) {
-				// Date, Time, BG
-				String[] record = line.split(",");
-				if (record.length == 3) {	// Otherwise, invalid record, skip it
-					values = new ContentValues();
-					values.put(GlucoseRecord.BLOOD_SUGAR_DATE, record[0]);
-					values.put(GlucoseRecord.BLOOD_SUGAR_TIME, record[1]);
-					values.put(GlucoseRecord.BLOOD_SUGAR, record[2]);
-					db.insert(GlucoseRecord.TABLE_NAME, null, values);
-				}
-			}
-		} catch (IOException e) {
-			// NOOP - Don't care if the files not there...
-		}
 	}
 	
 	///////////// DB OPERATIONS ///////////////
