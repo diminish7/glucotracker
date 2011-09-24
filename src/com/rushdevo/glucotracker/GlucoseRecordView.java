@@ -42,6 +42,7 @@ public class GlucoseRecordView extends LinearLayout {
 	public void setRecord(GlucoseRecord record) {
 		this.record = record;
 		invalidateRecordText();
+		setColor();
 	}
 
 	public GlucoseRecord getRecord() {
@@ -53,10 +54,6 @@ public class GlucoseRecordView extends LinearLayout {
 		int sidePadding = 10*dip;
 		int topPadding = 5*dip;
 		int width = 80*dip;
-		
-		if (this.record.shouldFlag()) {
-			setBackgroundColor(Color.RED);
-		}
 		
 		bloodSugarView = new TextView(context);
 		bloodSugarView.setPadding(sidePadding, topPadding, sidePadding, topPadding);
@@ -84,5 +81,13 @@ public class GlucoseRecordView extends LinearLayout {
 	private void invalidateRecordText() {
 		if (bloodSugarView != null) bloodSugarView.setText(this.record.getBloodSugar().toString());
 		if (dateView != null) dateView.setText(formattedTimestamp(record.getBloodSugarDate(), record.getBloodSugarTime()));
+	}
+	
+	private void setColor() {
+		if (this.record.shouldFlag()) {
+			setBackgroundColor(Color.RED);
+		} else {
+			setBackgroundColor(Color.BLACK);
+		}
 	}
 }
