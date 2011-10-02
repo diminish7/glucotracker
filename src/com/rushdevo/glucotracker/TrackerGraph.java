@@ -115,6 +115,12 @@ public class TrackerGraph extends Activity implements GlucoseRecordListable {
 	        graph.getGraphWidget().setPaddingBottom(10);
 	        
 	        graph.addSeries(series, formatter);
+	        
+	        // Add ideal range lines
+	        LineAndPointFormatter boundaryFormatter  = new LineAndPointFormatter(Color.RED, Color.RED, Color.WHITE);
+	        boundaryFormatter.setFillPaint(lineFill);
+	        graph.addSeries(getHighRangeSeries(), boundaryFormatter);
+	        graph.addSeries(getLowRangeSeries(), boundaryFormatter);
 	 
 	        // draw a domain tick for each year:
 	        graph.setDomainStep(XYStepMode.SUBDIVIDE, getNumberOfTickmarks());
@@ -161,6 +167,46 @@ public class TrackerGraph extends Activity implements GlucoseRecordListable {
 			// No valid data, no graph
 			return null;
 		}
+	}
+	
+	/**
+	 * Get a two-element series drawing a line across the high end of the ideal range
+	 */
+	private XYSeries getHighRangeSeries() {
+		Integer high = Settings.getHigh(this);
+		List<GlucoseRecord> records = glucoseRecordList.getRecords();
+		List<Number> x = new ArrayList<Number>();
+		List<Number> y = new ArrayList<Number>();
+		
+		GlucoseRecord record = records.get(0);
+		x.add(record.getBloodSugarTimestamp());
+		y.add(high);
+		
+		record = records.get(records.size()-1);
+		x.add(record.getBloodSugarTimestamp());
+		y.add(high);
+		
+		return new SimpleXYSeries(x, y, "");
+	}
+	
+	/**
+	 * Get a two-element series drawing a line across the low end of the ideal range
+	 */
+	private XYSeries getLowRangeSeries() {
+		Integer low = Settings.getLow(this);
+		List<GlucoseRecord> records = glucoseRecordList.getRecords();
+		List<Number> x = new ArrayList<Number>();
+		List<Number> y = new ArrayList<Number>();
+		
+		GlucoseRecord record = records.get(0);
+		x.add(record.getBloodSugarTimestamp());
+		y.add(low);
+		
+		record = records.get(records.size()-1);
+		x.add(record.getBloodSugarTimestamp());
+		y.add(low);
+		
+		return new SimpleXYSeries(x, y, "");
 	}
 	
 	/**
