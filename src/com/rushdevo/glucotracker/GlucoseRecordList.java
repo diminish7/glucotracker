@@ -6,7 +6,9 @@ package com.rushdevo.glucotracker;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -29,6 +31,7 @@ public class GlucoseRecordList {
 	private Calendar stopDateCal;
 	private Integer average;
 	private SimpleDateFormat formatter;
+	private Integer numberOfDays;
 	
 	private List<GlucoseRecord> records;
 	private Activity activity;
@@ -41,6 +44,7 @@ public class GlucoseRecordList {
         resetTitle();
         queryRecords();
         calculateAverage();
+        determineNumberOfDays();
 	}
 	
 	/////// GETTERS AND SETTERS ////////////
@@ -74,6 +78,13 @@ public class GlucoseRecordList {
 	
 	public Integer getAverage() {
 		return this.average;
+	}
+	
+	/**
+	 * @return The number of days represented in the dataset
+	 */
+	public Integer getNumberOfDays() {
+		return this.numberOfDays;
 	}
 	
 	/////// HELPERS //////////////
@@ -179,5 +190,16 @@ public class GlucoseRecordList {
 		}
 		
 		activity.setTitle(title);
+	}
+	
+	/**
+	 * Determines the number of days represented in the dataset and set this.numberOfDays
+	 */
+	private void determineNumberOfDays() {
+		Set<String> dates = new HashSet<String>();
+		for (GlucoseRecord record : getRecords()) {
+			dates.add(record.getBloodSugarDate());
+		}
+		this.numberOfDays = dates.size();
 	}
 }

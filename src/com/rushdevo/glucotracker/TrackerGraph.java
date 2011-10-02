@@ -6,6 +6,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
@@ -116,7 +117,7 @@ public class TrackerGraph extends Activity implements GlucoseRecordListable {
 	        graph.addSeries(series, formatter);
 	 
 	        // draw a domain tick for each year:
-	        graph.setDomainStep(XYStepMode.SUBDIVIDE, 4);
+	        graph.setDomainStep(XYStepMode.SUBDIVIDE, getNumberOfTickmarks());
 	 
 	        // customize our domain/range labels
 	        graph.setDomainLabel("Date");
@@ -159,6 +160,28 @@ public class TrackerGraph extends Activity implements GlucoseRecordListable {
 		} else {
 			// No valid data, no graph
 			return null;
+		}
+	}
+	
+	/**
+	 * 
+	 * @return Number of tickmarks for graph to use
+	 * 
+	 * Right now defaults to 4 for portrait and 8 for landscape.
+	 * Should probably be more discerning than that... (TODO) 
+	 */
+	private Integer getNumberOfTickmarks() {
+		int numberOfDays = glucoseRecordList.getNumberOfDays();
+		int maxTickmarks;
+		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			maxTickmarks = 8;
+		} else {
+			maxTickmarks = 4;
+		}
+		if (numberOfDays <= maxTickmarks) {
+			return numberOfDays;
+		} else {
+			return maxTickmarks;
 		}
 	}
 }
