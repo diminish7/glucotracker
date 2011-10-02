@@ -1,6 +1,11 @@
 package com.rushdevo.glucotracker.data;
 
 import static android.provider.BaseColumns._ID;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import android.content.Context;
 import android.database.Cursor;
 
@@ -32,9 +37,12 @@ public class GlucoseRecord {
 	private GlucotrackerData delegate;
 	private String[] errors = {};
 	
+	private SimpleDateFormat dateParser;
+	
 	/////////// CONSTRUCTORS ///////////////////
 	public GlucoseRecord(GlucotrackerData delegate, Cursor cursor) {
 		this.delegate = delegate;
+		this.dateParser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		refreshFromCursor(cursor);
 	}
 	
@@ -85,6 +93,17 @@ public class GlucoseRecord {
 
 	public String getBloodSugarTime() {
 		return bloodSugarTime;
+	}
+	
+	// Return the epoch time
+	public Long getBloodSugarTimestamp() {
+		String timestampString = this.bloodSugarDate + " " + this.bloodSugarTime;
+		try {
+			Date timestamp = dateParser.parse(timestampString);
+			return timestamp.getTime();
+		} catch (ParseException e) {
+			return null;
+		}
 	}
 
 	public void setBloodSugarMeal(Boolean bloodSugarMeal) {

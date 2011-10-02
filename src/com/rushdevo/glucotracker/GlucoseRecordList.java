@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
 
-import com.rushdevo.glucotracker.R;
 import com.rushdevo.glucotracker.data.GlucoseRecord;
 import com.rushdevo.glucotracker.data.GlucotrackerData;
 

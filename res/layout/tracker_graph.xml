@@ -4,13 +4,21 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
  
-    <!-- <com.androidplot.xy.XYPlot
+    <com.androidplot.xy.XYPlot
 	    android:id="@+id/graph"
 	    android:layout_width="fill_parent"
-	    android:layout_height="100px"
-	    android:layout_marginTop="10px"
-	    android:layout_marginLeft="10px"
-	    android:layout_marginRight="10px"
+	    android:layout_height="fill_parent"
+	    android:layout_marginTop="10dip"
+	    android:layout_marginLeft="10dip"
+	    android:layout_marginRight="10dip"
+	    android:layout_marginBottom="10dip"
 	    title="Graph"
-	   	/> -->
+	   	/>
+	
+	<TextView
+	    android:id="@+id/no_data"
+	    android:gravity="center_vertical|center_horizontal"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:text="@string/list_no_records"/>
 </LinearLayout>

@@ -24,13 +24,14 @@ public final class R {
         public static final int blood_sugar_field=0x7f090004;
         public static final int blood_sugar_meal_field=0x7f090007;
         public static final int blood_sugar_time_field=0x7f090006;
-        public static final int change_dates=0x7f09000d;
+        public static final int change_dates=0x7f09000e;
         public static final int form_button=0x7f090009;
         public static final int form_scroll_view=0x7f090002;
-        public static final int graph=0x7f09000c;
-        public static final int list=0x7f09000b;
+        public static final int graph=0x7f09000a;
+        public static final int list=0x7f09000d;
         public static final int message_view=0x7f090003;
-        public static final int settings=0x7f09000a;
+        public static final int no_data=0x7f09000b;
+        public static final int settings=0x7f09000c;
         public static final int start_date=0x7f090000;
         public static final int stop_date=0x7f090001;
     }
