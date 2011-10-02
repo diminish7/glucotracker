@@ -7,7 +7,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.rushdevo.glucotracker.data.GlucoseRecordList;
 
 /**
  * @author jasonrush

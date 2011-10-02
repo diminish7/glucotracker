@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.rushdevo.glucotracker.data.GlucoseRecordList;
 
 /**
  * @author jasonrush
