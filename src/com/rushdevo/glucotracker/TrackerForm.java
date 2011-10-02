@@ -92,9 +92,8 @@ public class TrackerForm extends Activity implements OnClickListener {
     		startActivity(new Intent(this, TrackerList.class));
     		return true;
     	case R.id.graph:
-    		// TODO
+    		startActivity(new Intent(this, TrackerGraph.class));
     		return true;
-    	// TODO: Addtl menu items go here
     	}
     	return false;
     }

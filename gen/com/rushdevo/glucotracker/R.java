@@ -37,11 +37,13 @@ public final class R {
     public static final class layout {
         public static final int date_changer=0x7f030000;
         public static final int tracker_form=0x7f030001;
-        public static final int tracker_list=0x7f030002;
+        public static final int tracker_graph=0x7f030002;
+        public static final int tracker_list=0x7f030003;
     }
     public static final class menu {
         public static final int form_menu=0x7f080000;
-        public static final int list_menu=0x7f080001;
+        public static final int graph_menu=0x7f080001;
+        public static final int list_menu=0x7f080002;
     }
     public static final class string {
         public static final int alert_dialog_cancel=0x7f060011;
