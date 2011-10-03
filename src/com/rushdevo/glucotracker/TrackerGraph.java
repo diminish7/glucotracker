@@ -1,7 +1,6 @@
 package com.rushdevo.glucotracker;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -18,7 +17,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.androidplot.Plot;
-import com.androidplot.series.XYSeries;
 import com.androidplot.xy.LineAndPointFormatter;
 import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
@@ -34,17 +32,24 @@ public class TrackerGraph extends Activity implements GlucoseRecordListable {
 	private GlucoseRecordList glucoseRecordList;
 	private XYPlot graph;
 	private TextView noDataView;
+	private SimpleXYSeries series;
+	private SimpleXYSeries highSeries;
+	private SimpleXYSeries lowSeries;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tracker_graph);
 		this.glucoseRecordList = new GlucoseRecordList(this);
+		this.series = new SimpleXYSeries(getTitle().toString());
+		this.highSeries = new SimpleXYSeries("");
+		this.lowSeries = new SimpleXYSeries("");
 		
 		graph = (XYPlot)findViewById(R.id.graph);
 		noDataView = (TextView)findViewById(R.id.no_data);
 		
-		updateGraph();
+		initGraph();
+		updateSeries();
 	}
 	
 	@Override
@@ -72,20 +77,33 @@ public class TrackerGraph extends Activity implements GlucoseRecordListable {
 	
 	////////////HELPERS ///////////////
 	/**
+	 * @return The records from the list
+	 */
+	private List<GlucoseRecord> getRecords() {
+		return glucoseRecordList.getRecords();
+	}
+	
+	/**
+	 * @return true if their are one or more records
+	 */
+	private Boolean isEmpty() {
+		return getRecords().isEmpty();
+	}
+	
+	/**
 	 * Implementation - See GlucoseRecordListable
 	 * Update the list and set the footer text
 	 */
 	public void afterDateChange() {
-    	updateGraph();
+		updateSeries();
+    	graph.redraw();
 	}
 	
 	/**
 	 * Initialize the graph
 	 */
-	private void updateGraph() {
-		XYSeries series = getSeries();
-		
-		if (series == null) {
+	private void initGraph() {
+		if (isEmpty()) {
 			// No data, no graph
 			graph.setVisibility(View.GONE);
 			noDataView.setVisibility(View.VISIBLE);
@@ -104,24 +122,9 @@ public class TrackerGraph extends Activity implements GlucoseRecordListable {
 	        graph.getBorderPaint().setAntiAlias(false);
 	        graph.getBorderPaint().setColor(Color.WHITE);
 	 
-	        // setup our line fill paint to be a slightly transparent gradient:
-	        Paint lineFill = new Paint();
-	        lineFill.setAlpha(0);
-	 
-	        LineAndPointFormatter formatter  = new LineAndPointFormatter(Color.BLACK, Color.BLACK, Color.WHITE);
-	        formatter.setFillPaint(lineFill);
-	        
 	        graph.getGraphWidget().setPaddingRight(2);
 	        graph.getGraphWidget().setPaddingBottom(10);
 	        
-	        graph.addSeries(series, formatter);
-	        
-	        // Add ideal range lines
-	        LineAndPointFormatter boundaryFormatter  = new LineAndPointFormatter(Color.RED, Color.RED, Color.WHITE);
-	        boundaryFormatter.setFillPaint(lineFill);
-	        graph.addSeries(getHighRangeSeries(), boundaryFormatter);
-	        graph.addSeries(getLowRangeSeries(), boundaryFormatter);
-	 
 	        // draw a domain tick for each year:
 	        graph.setDomainStep(XYStepMode.SUBDIVIDE, getNumberOfTickmarks());
 	 
@@ -141,72 +144,80 @@ public class TrackerGraph extends Activity implements GlucoseRecordListable {
 	}
 	
 	/**
-	 * Get the record data as a SimpleXYSeries for the graph
+	 * Add series to the graph
 	 */
-	private XYSeries getSeries() {
-		List<GlucoseRecord> records = glucoseRecordList.getRecords();
-		if (records == null || records.isEmpty()) return null;
-		List<Number> x = new ArrayList<Number>();
-		List<Number> y = new ArrayList<Number>();
-		Boolean addedAny = false;
-		for (GlucoseRecord record : records) {
-			Long timestamp = record.getBloodSugarTimestamp();
-			Integer bloodSugar = record.getBloodSugar();
-			// Skip it if either value is null...
-			if (timestamp != null && bloodSugar != null) {
-				addedAny = true;
-				// Timestamp goes in x
-				x.add(timestamp);
-				// Blood sugar goes in y
-				y.add(bloodSugar);
-			}
-		}
-		if (addedAny) {
-			return new SimpleXYSeries(x, y, getTitle().toString());
-		} else {
-			// No valid data, no graph
-			return null;
-		}
+	private void addSeriesToGraph() {
+		Paint lineFill = new Paint();
+        lineFill.setAlpha(0);
+        
+		LineAndPointFormatter formatter  = new LineAndPointFormatter(Color.BLACK, Color.BLACK, Color.WHITE);
+        formatter.setFillPaint(lineFill);
+        graph.addSeries(series, formatter);
+        
+        LineAndPointFormatter boundaryFormatter  = new LineAndPointFormatter(Color.RED, Color.RED, Color.WHITE);
+        boundaryFormatter.setFillPaint(lineFill);
+        graph.addSeries(highSeries, boundaryFormatter);
+        graph.addSeries(lowSeries, boundaryFormatter);
 	}
 	
 	/**
+	 * Update the SimpleXYSeries for the graph
+	 */
+	private void updateSeries() {
+		if (!isEmpty()) {
+			List<GlucoseRecord> records = getRecords();
+			// Clear the series
+			clearSeries(series);
+			// And add back to it
+			for (GlucoseRecord record : records) {
+				Long timestamp = record.getBloodSugarTimestamp();
+				Integer bloodSugar = record.getBloodSugar();
+				// Skip it if either value is null...
+				if (timestamp != null && bloodSugar != null) {
+					series.addLast(timestamp, bloodSugar);
+				}
+			}
+			updateHighRangeSeries();
+			updateLowRangeSeries();
+			addSeriesToGraph();
+		}		
+	}
+	/**
 	 * Get a two-element series drawing a line across the high end of the ideal range
 	 */
-	private XYSeries getHighRangeSeries() {
-		Integer high = Settings.getHigh(this);
-		List<GlucoseRecord> records = glucoseRecordList.getRecords();
-		List<Number> x = new ArrayList<Number>();
-		List<Number> y = new ArrayList<Number>();
-		
-		GlucoseRecord record = records.get(0);
-		x.add(record.getBloodSugarTimestamp());
-		y.add(high);
-		
-		record = records.get(records.size()-1);
-		x.add(record.getBloodSugarTimestamp());
-		y.add(high);
-		
-		return new SimpleXYSeries(x, y, "");
+	private void updateHighRangeSeries() {
+		if (!isEmpty()) {
+			clearSeries(highSeries);
+			Integer high = Settings.getHigh(this);
+			List<GlucoseRecord> records = getRecords();
+			
+			GlucoseRecord record = records.get(0);
+			highSeries.addLast(record.getBloodSugarTimestamp(), high);
+			
+			record = records.get(records.size()-1);
+			highSeries.addLast(record.getBloodSugarTimestamp(), high);
+		}
 	}
 	
 	/**
 	 * Get a two-element series drawing a line across the low end of the ideal range
 	 */
-	private XYSeries getLowRangeSeries() {
-		Integer low = Settings.getLow(this);
-		List<GlucoseRecord> records = glucoseRecordList.getRecords();
-		List<Number> x = new ArrayList<Number>();
-		List<Number> y = new ArrayList<Number>();
-		
-		GlucoseRecord record = records.get(0);
-		x.add(record.getBloodSugarTimestamp());
-		y.add(low);
-		
-		record = records.get(records.size()-1);
-		x.add(record.getBloodSugarTimestamp());
-		y.add(low);
-		
-		return new SimpleXYSeries(x, y, "");
+	private void updateLowRangeSeries() {
+		if (!isEmpty()) {
+			clearSeries(lowSeries);
+			Integer low = Settings.getLow(this);
+			List<GlucoseRecord> records = getRecords();
+			
+			GlucoseRecord record = records.get(0);
+			lowSeries.addLast(record.getBloodSugarTimestamp(), low);
+			
+			record = records.get(records.size()-1);
+			lowSeries.addLast(record.getBloodSugarTimestamp(), low);
+		}
+	}
+	
+	private void clearSeries(SimpleXYSeries xySeries) {
+		while (xySeries.size() > 0) xySeries.removeFirst();
 	}
 	
 	/**
