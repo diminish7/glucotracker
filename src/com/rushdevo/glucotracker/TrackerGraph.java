@@ -40,7 +40,15 @@ public class TrackerGraph extends Activity implements GlucoseRecordListable {
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tracker_graph);
-		this.glucoseRecordList = new GlucoseRecordList(this);
+		
+		Long startDate = null;
+		Long stopDate = null;
+		if (savedInstanceState != null) {
+			startDate = savedInstanceState.getLong("startDate");
+			stopDate = savedInstanceState.getLong("stopDate");
+		}
+		
+		this.glucoseRecordList = new GlucoseRecordList(this, startDate, stopDate);
 		this.series = new SimpleXYSeries(getTitle().toString());
 		this.highSeries = new SimpleXYSeries("");
 		this.lowSeries = new SimpleXYSeries("");
@@ -51,6 +59,19 @@ public class TrackerGraph extends Activity implements GlucoseRecordListable {
 		initGraph();
 		updateSeries();
 	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+	    super.onSaveInstanceState(outState);
+	    outState.putLong("startDate", this.glucoseRecordList.getStartDate().getTimeInMillis());
+	    outState.putLong("stopDate", this.glucoseRecordList.getStopDate().getTimeInMillis());
+	}
+	
+	@Override
+    public void onPause() {
+		super.onPause();
+    	if (this.glucoseRecordList != null) this.glucoseRecordList.close();
+    }
 	
 	@Override
     public boolean onCreateOptionsMenu(Menu menu) {

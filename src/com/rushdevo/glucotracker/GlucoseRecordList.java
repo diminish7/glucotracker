@@ -36,11 +36,11 @@ public class GlucoseRecordList {
 	private List<GlucoseRecord> records;
 	private Activity activity;
 	
-	public GlucoseRecordList(Context context) {
+	public GlucoseRecordList(Context context, Long startDateInMillis, Long stopDateInMillis) {
 		this.dataDelegate = new GlucotrackerData(context);
 		this.activity = (Activity)context;
 		this.formatter = new SimpleDateFormat("M/d/yyyy");
-		initializeDates();
+		initializeDates(startDateInMillis, stopDateInMillis);
         resetTitle();
         queryRecords();
         calculateAverage();
@@ -141,17 +141,31 @@ public class GlucoseRecordList {
 		return true;
 	}
 	
+    public void close() {
+    	if (this.dataDelegate != null) this.dataDelegate.close();
+    }
+	
 	/**
 	 * Initialize the dates for the query. Default to current month
 	 */
-	private void initializeDates() {
+	private void initializeDates(Long startDateInMillis, Long stopDateInMillis) {
 		startDateCal = Calendar.getInstance();
-		startDateCal.setTime(new Date());
-		startDateCal.set(Calendar.DAY_OF_MONTH, 1);
+		if (startDateInMillis == null) {
+			// Default to beginning of current month
+			startDateCal.setTime(new Date());
+			startDateCal.set(Calendar.DAY_OF_MONTH, 1);
+		} else {
+			startDateCal.setTime(new Date(startDateInMillis));
+		}
 		
 		stopDateCal = Calendar.getInstance();
-		stopDateCal.setTime(new Date());
-		stopDateCal.set(Calendar.DAY_OF_MONTH, stopDateCal.getActualMaximum(Calendar.DAY_OF_MONTH));
+		if (stopDateInMillis == null) {
+			// Default to end of current month
+			stopDateCal.setTime(new Date());
+			stopDateCal.set(Calendar.DAY_OF_MONTH, stopDateCal.getActualMaximum(Calendar.DAY_OF_MONTH));
+		} else {
+			stopDateCal.setTime(new Date(stopDateInMillis));
+		}
 	}
 	
 	/**

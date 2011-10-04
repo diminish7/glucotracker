@@ -26,7 +26,15 @@ public class TrackerList extends ListActivity implements GlucoseRecordListable {
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tracker_list);
-		this.glucoseRecordList = new GlucoseRecordList(this);
+		
+		Long startDate = null;
+		Long stopDate = null;
+		if (savedInstanceState != null) {
+			startDate = savedInstanceState.getLong("startDate");
+			stopDate = savedInstanceState.getLong("stopDate");
+		}
+		
+		this.glucoseRecordList = new GlucoseRecordList(this, startDate, stopDate);
 		this.listView = getListView();
         footer = new TextView(this);
         setFooterText();
@@ -35,6 +43,19 @@ public class TrackerList extends ListActivity implements GlucoseRecordListable {
         listAdapter = new GlucoseRecordAdapter(this, android.R.layout.simple_list_item_1, glucoseRecordList.getRecords());
         setListAdapter(listAdapter);
 	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+	    super.onSaveInstanceState(outState);
+	    outState.putLong("startDate", this.glucoseRecordList.getStartDate().getTimeInMillis());
+	    outState.putLong("stopDate", this.glucoseRecordList.getStopDate().getTimeInMillis());
+	}
+	
+	@Override
+    public void onPause() {
+		super.onPause();
+    	if (this.glucoseRecordList != null) this.glucoseRecordList.close();
+    }
 	
 	@Override
     public boolean onCreateOptionsMenu(Menu menu) {

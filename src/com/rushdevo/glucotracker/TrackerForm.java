@@ -51,7 +51,12 @@ public class TrackerForm extends Activity implements OnClickListener {
         this.messageView = (TextView)findViewById(R.id.message_view);
         this.dataDelegate = new GlucotrackerData(this);
     }
-
+    
+    @Override
+    public void onPause() {
+    	super.onPause();
+    	if (this.dataDelegate != null) this.dataDelegate.close();
+    }
 
 	@Override
 	public void onClick(View v) {
